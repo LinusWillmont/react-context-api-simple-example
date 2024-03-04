@@ -3,7 +3,6 @@ import { PostContext } from "../App";
 
 export default function Posts() {
 	const { posts } = useContext(PostContext);
-	console.log(posts);
 	return (
 		<>
 			{posts.map((post) => {

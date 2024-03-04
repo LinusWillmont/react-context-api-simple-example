@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PostContext } from "../App";
 
 const INITIAL_POST = {
@@ -7,23 +7,29 @@ const INITIAL_POST = {
 };
 
 export default function CreatePost() {
-	const [post, setPost] = useState(INITIAL_POST);
+	if (!localStorage.getItem("wipPost")) {
+		localStorage.setItem("wipPost", JSON.stringify(INITIAL_POST));
+	}
+	const wipPost = localStorage.getItem("wipPost");
+
+	const [post, setPost] = useState(JSON.parse(wipPost));
 	const { posts, setPosts } = useContext(PostContext);
-	console.log(posts, setPosts);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setPost({
-			...post,
-			[name]: value,
-		});
+		const updatedPost = { ...post, [name]: value };
+		setPost(updatedPost);
+		localStorage.setItem("wipPost", JSON.stringify(updatedPost));
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		setPosts([...posts, post]);
 		setPost(INITIAL_POST);
+		localStorage.clear();
 	};
+
+	// useEffect(() => {}, [handleChange]);
 
 	return (
 		<form onSubmit={handleSubmit}>
