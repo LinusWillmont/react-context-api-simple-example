@@ -6,13 +6,16 @@ const INITIAL_POST = {
 	content: "",
 };
 
-export default function CreatePost() {
-	if (!localStorage.getItem("wipPost")) {
-		localStorage.setItem("wipPost", JSON.stringify(INITIAL_POST));
-	}
+const loadPostFromLocalStorage = () => {
 	const wipPost = localStorage.getItem("wipPost");
+	if (wipPost) {
+		return JSON.parse(wipPost);
+	}
+	return { ...INITIAL_POST };
+};
 
-	const [post, setPost] = useState(JSON.parse(wipPost));
+export default function CreatePost() {
+	const [post, setPost] = useState(loadPostFromLocalStorage());
 	const { posts, setPosts } = useContext(PostContext);
 
 	const handleChange = (e) => {
@@ -26,10 +29,8 @@ export default function CreatePost() {
 		e.preventDefault();
 		setPosts([...posts, post]);
 		setPost(INITIAL_POST);
-		localStorage.clear();
+		localStorage.removeItem("wipPost");
 	};
-
-	// useEffect(() => {}, [handleChange]);
 
 	return (
 		<form onSubmit={handleSubmit}>
